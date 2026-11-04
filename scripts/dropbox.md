@@ -7,7 +7,10 @@ backups to your own Dropbox, and downloads the backups that only exist in Dropbo
 Copy [`common/universal/dropbox.c`](common/universal/dropbox.c) to
 `/3ds/Checkpoint/scripts/universal/dropbox.c` (Switch:
 `/switch/Checkpoint/scripts/universal/dropbox.c`). It needs Checkpoint 5.0 or
-newer (the scripting engine).
+newer (the scripting engine). Download:
+<https://github.com/noctis1008-wq/checkpoint/releases/latest/download/dropbox.c>.
+Later updates can be fetched on the console itself with the
+`github_downloader` script (same release).
 
 **Nothing is ever written to a game's save by this script.** Downloaded backups
 appear in Checkpoint's backup list; you restore them there, with Checkpoint's own

@@ -1,4 +1,4 @@
-name: Release Dropbox script
+name: Release scripts
 
 # Publishes dropbox.c (and its guide) as a GitHub release on every push to the
 # dropbox-sync branch, so it can be downloaded on its own:
@@ -8,6 +8,7 @@ on:
     branches: [dropbox-sync]
     paths:
       - scripts/common/universal/dropbox.c
+      - scripts/common/universal/github_downloader.c
       - scripts/dropbox.md
       - .github/workflows/release-scripts.yml
 
@@ -22,19 +23,21 @@ jobs:
       - name: Parse-check the script
         run: |
           git submodule update --init --depth 1 3rd-party/picoc
-          bash tools/scriptlint.sh scripts/common/universal/dropbox.c
+          bash tools/scriptlint.sh scripts/common/universal/dropbox.c scripts/common/universal/github_downloader.c
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dropbox-${{ github.run_number }}
-          name: Dropbox sync script (build ${{ github.run_number }})
+          name: Dropbox sync + GitHub downloader scripts (build ${{ github.run_number }})
           target_commitish: ${{ github.sha }}
           make_latest: true
           files: |
             scripts/common/universal/dropbox.c
+            scripts/common/universal/github_downloader.c
             scripts/dropbox.md
           body: |
-            Copy dropbox.c to SD:/3ds/Checkpoint/scripts/universal/ (Switch: SD:/switch/Checkpoint/scripts/universal/). Needs Checkpoint 5.0 or newer.
+            Copy dropbox.c and/or github_downloader.c to SD:/3ds/Checkpoint/scripts/universal/ (Switch: SD:/switch/Checkpoint/scripts/universal/). Needs Checkpoint 5.0 or newer.
+            github_downloader.c downloads (and updates) dropbox.c, GodMode9_RefFix.firm and files from any public GitHub release, straight from the console.
             Setup guide: dropbox.md
             Always-current download: https://github.com/${{ github.repository }}/releases/latest/download/dropbox.c
