@@ -9,6 +9,7 @@ on:
     paths:
       - scripts/common/universal/dropbox.c
       - scripts/common/universal/github_downloader.c
+      - scripts/3ds/universal/update_reffix.c
       - scripts/dropbox.md
       - .github/workflows/release-scripts.yml
 
@@ -23,7 +24,7 @@ jobs:
       - name: Parse-check the script
         run: |
           git submodule update --init --depth 1 3rd-party/picoc
-          bash tools/scriptlint.sh scripts/common/universal/dropbox.c scripts/common/universal/github_downloader.c
+          bash tools/scriptlint.sh scripts/common/universal/dropbox.c scripts/common/universal/github_downloader.c scripts/3ds/universal/update_reffix.c scripts/3ds/universal/update_reffix.c
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
@@ -35,9 +36,11 @@ jobs:
           files: |
             scripts/common/universal/dropbox.c
             scripts/common/universal/github_downloader.c
+            scripts/3ds/universal/update_reffix.c
             scripts/dropbox.md
           body: |
             Copy dropbox.c and/or github_downloader.c to SD:/3ds/Checkpoint/scripts/universal/ (Switch: SD:/switch/Checkpoint/scripts/universal/). Needs Checkpoint 5.0 or newer.
+            update_reffix.c (3DS) updates GodMode9_RefFix.firm in /luma/payloads/ in one go, keeping a hotkey name such as x_GodMode9_RefFix.firm.
             github_downloader.c downloads (and updates) dropbox.c, GodMode9_RefFix.firm and files from any public GitHub release, straight from the console.
             Setup guide: dropbox.md
             Always-current download: https://github.com/${{ github.repository }}/releases/latest/download/dropbox.c

@@ -51,4 +51,25 @@ grep -q "owner/repo" "$work/07-bad-name.out" || fail "bad name not explained"
 EXPECT=1 run 08-missing-repo 3 nobody/none ok
 grep -q "Not found (404)" "$work/08-missing-repo.out" || fail "404 not explained"
 EXPECT=0 run 09-cancel 3 "<cancel>"
+# one-touch RefFix update script
+sed -e "s|https://github.com/|http://127.0.0.1:$port/|" -e "s|#define PAYLOADS \"/luma/payloads\"|#define PAYLOADS \"$sd/luma/payloads2\"|" \
+    "$root/scripts/3ds/universal/update_reffix.c" > "$work/upd.c"
+grep -q "$sd/luma/payloads2" "$work/upd.c"
+runupd() {
+    local name="$1"; shift
+    printf '%s\n' "$@" > "$sd/answers.txt"
+    echo "=== $name"
+    (cd "$work" && "$build/host_sim" "$sd" "$work/upd.c" "") > "$work/$name.out" 2> "$work/$name.err" || { tail -20 "$work/$name.out"; fail "$name"; }
+}
+runupd 10-update-fresh ok
+[ -f "$sd/luma/payloads2/GodMode9_RefFix.firm" ] || fail "fresh update not saved"
+rm "$sd/luma/payloads2/GodMode9_RefFix.firm"
+echo old > "$sd/luma/payloads2/x_GodMode9_RefFix.firm"
+echo other > "$sd/luma/payloads2/GodMode9.firm"
+runupd 11-update-hotkey ok
+head -c 4 "$sd/luma/payloads2/x_GodMode9_RefFix.firm" | grep -q FIRM || fail "hotkey copy not replaced"
+[ ! -f "$sd/luma/payloads2/GodMode9_RefFix.firm" ] || fail "a second copy was created"
+[ "$(cat "$sd/luma/payloads2/GodMode9.firm")" = "other" ] || fail "stock GodMode9 touched"
+ls "$sd/luma/payloads2" | grep -q part && fail ".part left behind" || true
+
 echo "ALL GITHUB SIM TESTS PASSED"
