@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end test of scripts/common/universal/github_downloader.c against mock_github.py.
+# End-to-end test of scripts/common/universal/c_github_downloader.c against mock_github.py.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/../.." && pwd)"
@@ -16,7 +16,7 @@ ln -s / "$work/sdmc:"
 sed -e "s|https://api.github.com/repos/|http://127.0.0.1:$port/api/repos/|" \
     -e "s|https://github.com/|http://127.0.0.1:$port/|" \
     -e "s|        g_sd\[0\] = '\\\\0';|        strcpy(g_sd, \"$sd\");|" \
-    "$root/scripts/common/universal/github_downloader.c" > "$work/gh.c"
+    "$root/scripts/common/universal/c_github_downloader.c" > "$work/gh.c"
 grep -q "strcpy(g_sd, \"$sd\")" "$work/gh.c"
 echo "000400000011C500|Test|1|0" > "$sd/titles.txt"
 python3 "$here/mock_github.py" $port &
@@ -33,13 +33,15 @@ run() {
     if [ "$rc" != "${EXPECT:-0}" ]; then tail -30 "$work/$name.out"; tail -15 "$work/$name.err"; fail "$name exited $rc"; fi
     grep -E "^\[sim\]" "$work/$name.out"
 }
-run 01-preset-dropbox 0 y ok
-[ "$(cat "$sd/scripts/universal/dropbox.c")" = "/* dropbox */" ] || fail "dropbox.c not saved"
-run 02-preset-firm 1 y ok
-[ -f "$sd/luma/payloads/GodMode9_RefFix.firm" ] || fail "firm not saved"
+run 01-preset-firm 0 y ok
+[ -f "$sd/luma/payloads/GodMode9_RefFix.firm" ] || fail "firm not saved (first preset)"
 [ ! -f "$sd/luma/payloads/GodMode9_RefFix.firm.part" ] || fail ".part left behind"
+run 02-preset-dropbox 1 y ok
+[ "$(cat "$sd/scripts/universal/dropbox.c")" = "/* dropbox */" ] || fail "dropbox.c not saved"
+echo "/* old name */" > "$sd/scripts/universal/github_downloader.c"
 run 03-self-update 2 y ok
-[ -f "$sd/scripts/universal/github_downloader.c" ] || fail "self-update not saved"
+[ -f "$sd/scripts/universal/c_github_downloader.c" ] || fail "self-update not saved"
+[ ! -f "$sd/scripts/universal/github_downloader.c" ] || fail "old github_downloader.c not retired"
 run 04-custom-firm 3 test/proj 0 0 ok
 grep -q "\[PICK\] test/proj v1" "$work/04-custom-firm.out" || fail "asset list not shown"
 cmp <(python3 -c "import sys; sys.stdout.buffer.write(b'FIRM'+bytes(range(256))*40)") "$sd/luma/payloads/tool.firm" || fail "custom firm content"

@@ -9,4 +9,4 @@ dialog answers. See `host_sim.cpp`.
   mbedtls development packages).
 - `run_dropbox.sh` — end-to-end test of `scripts/common/universal/dropbox.c`
   against `mock_dropbox.py`, a strict local stand-in for the Dropbox API.
-- `run_github.sh` — end-to-end test of `github_downloader.c` against `mock_github.py`.
+- `run_github.sh` — end-to-end test of `c_github_downloader.c` against `mock_github.py`.

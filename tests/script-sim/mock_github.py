@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stand-in for the bits of GitHub that github_downloader.c uses: the
+"""Stand-in for the bits of GitHub that c_github_downloader.c uses: the
 releases/latest API and release-asset downloads (which redirect, like the real
 ones). Usage: mock_github.py <port>. Repos: test/proj (3 assets), noctis1008-wq/*."""
 import json, sys
@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 PORT = int(sys.argv[1])
 FILES = {
     "test/proj": {"tool.firm": b"FIRM" + bytes(range(256)) * 40, "script.c": b"int main(void){return 0;}\n", "big.3dsx": b"3DSX" * 5000},
-    "noctis1008-wq/checkpoint": {"dropbox.c": b"/* dropbox */\n", "github_downloader.c": b"/* gh */\n"},
+    "noctis1008-wq/checkpoint": {"dropbox.c": b"/* dropbox */\n", "c_github_downloader.c": b"/* gh */\n"},
     "noctis1008-wq/godmode9-with-cartridge-fixer": {"GodMode9_RefFix.firm": b"FIRMREFFIX" * 100},
 }
 

@@ -1,5 +1,8 @@
 /*
- * github_downloader.c — download files from GitHub releases (Checkpoint script)
+ * c_github_downloader.c — download files from GitHub releases (Checkpoint script)
+ *
+ * The "c_" prefix is only there for the script list, which Checkpoint sorts by
+ * name: it puts this script right after "browser", second in the list.
  *
  * Fetches a release asset straight onto the SD card, without a PC:
  *   - a few presets (the Dropbox sync script, GodMode9_RefFix, this script's
@@ -252,7 +255,7 @@ int download_to(char* url, char* dest)
  * in global arrays of char*: picoc's cleanup of such globals is not safe. */
 char* p_repo(int i)
 {
-    if (i == 1) {
+    if (i == 0) {
         return "noctis1008-wq/godmode9-with-cartridge-fixer";
     }
     return "noctis1008-wq/checkpoint";
@@ -261,39 +264,55 @@ char* p_repo(int i)
 char* p_asset(int i)
 {
     if (i == 0) {
-        return "dropbox.c";
-    }
-    if (i == 1) {
         return "GodMode9_RefFix.firm";
     }
-    return "github_downloader.c";
+    if (i == 1) {
+        return "dropbox.c";
+    }
+    return "c_github_downloader.c";
 }
 
 char* p_dest(int i)
 {
     if (i == 0) {
-        return "@/scripts/universal/dropbox.c";
-    }
-    if (i == 1) {
         return "/luma/payloads/GodMode9_RefFix.firm";
     }
-    return "@/scripts/universal/github_downloader.c";
+    if (i == 1) {
+        return "@/scripts/universal/dropbox.c";
+    }
+    return "@/scripts/universal/c_github_downloader.c";
 }
 
 char* p_label(int i)
 {
     if (i == 0) {
-        return "Dropbox sync script (dropbox.c)";
+        return "GodMode9_RefFix (cartridge fixer)";
     }
     if (i == 1) {
-        return "GodMode9_RefFix (cartridge fixer)";
+        return "Dropbox sync script (dropbox.c)";
     }
     return "Update this downloader";
 }
 
 int p_3dsonly(int i)
 {
-    return i == 1;
+    return i == 0;
+}
+
+/* Earlier versions were called github_downloader.c: once this one is in
+ * place under its new name, the old copy would only be a duplicate entry. */
+void drop_old_name(void)
+{
+    char old_path[PATHN];
+    char new_path[PATHN];
+    sprintf(old_path, "%s/scripts/universal/github_downloader.c", g_root);
+    sprintf(new_path, "%s/scripts/universal/c_github_downloader.c", g_root);
+    FILE* f = fopen(new_path, "rb");
+    if (f == NULL) {
+        return;
+    }
+    fclose(f);
+    remove(old_path);
 }
 
 /* Expand "@/x" to <root>/x and "/x" to <sd prefix>/x. */
@@ -329,7 +348,10 @@ int run_preset(int i)
         g_failed = 1;
         return 0;
     }
-    if (i == 1) {
+    if (i == NPRESET - 1) {
+        drop_old_name(); /* self-update: retire the old file name */
+    }
+    if (i == 0) {
         gui_message("Done. Hold START while powering on to\nopen it from the Luma3DS chainloader.");
     }
     else {
@@ -517,6 +539,7 @@ int main(int argc, char** argv)
 {
     init_paths();
     g_failed = 0;
+    drop_old_name();
 
     char* opts[NPRESET + 1];
     int map[NPRESET + 1];
