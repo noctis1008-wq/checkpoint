@@ -36,25 +36,27 @@ run() {
 run 01-preset-firm 0 y ok
 [ -f "$sd/luma/payloads/GodMode9_RefFix.firm" ] || fail "firm not saved (first preset)"
 [ ! -f "$sd/luma/payloads/GodMode9_RefFix.firm.part" ] || fail ".part left behind"
-run 02-preset-o3ds-rec 1 y ok
+run 02-preset-o3ds-ntr 1 y ok
+[ "$(cat "$sd/3ds/BootNTRSelector-o3ds-rec.3dsx")" = "3DSXNTR" ] || fail "BootNTRSelector not saved to /3ds"
+run 03-preset-o3ds-rec 2 y ok
 [ "$(cat "$sd/3ds/sdbench.3dsx")" = "3DSXBENCH" ] || fail "sdbench.3dsx not saved to /3ds"
-run 03-preset-dropbox 2 y ok
+run 03b-preset-dropbox 3 y ok
 [ "$(cat "$sd/scripts/universal/dropbox.c")" = "/* dropbox */" ] || fail "dropbox.c not saved"
 echo "/* old name */" > "$sd/scripts/universal/github_downloader.c"
-run 04-self-update 3 y ok
+run 04-self-update 4 y ok
 [ -f "$sd/scripts/universal/c_github_downloader.c" ] || fail "self-update not saved"
 [ ! -f "$sd/scripts/universal/github_downloader.c" ] || fail "old github_downloader.c not retired"
-run 05-custom-firm 4 test/proj 0 0 ok
+run 05-custom-firm 5 test/proj 0 0 ok
 grep -q "\[PICK\] test/proj v1" "$work/05-custom-firm.out" || fail "asset list not shown"
 cmp <(python3 -c "import sys; sys.stdout.buffer.write(b'FIRM'+bytes(range(256))*40)") "$sd/luma/payloads/tool.firm" || fail "custom firm content"
-run 06-custom-script-replace 4 test/proj 1 0 ok
-run 07-custom-replace-again 4 test/proj 1 0 y ok
+run 06-custom-script-replace 5 test/proj 1 0 ok
+run 07-custom-replace-again 5 test/proj 1 0 y ok
 [ -f "$sd/scripts/universal/script.c" ] || fail "script.c not saved to scripts"
-EXPECT=0 run 08-bad-name 4 "not a repo" ok
+EXPECT=0 run 08-bad-name 5 "not a repo" ok
 grep -q "owner/repo" "$work/08-bad-name.out" || fail "bad name not explained"
-EXPECT=1 run 09-missing-repo 4 nobody/none ok
+EXPECT=1 run 09-missing-repo 5 nobody/none ok
 grep -q "Not found (404)" "$work/09-missing-repo.out" || fail "404 not explained"
-EXPECT=0 run 10-cancel 4 "<cancel>"
+EXPECT=0 run 10-cancel 5 "<cancel>"
 # one-touch RefFix update script
 sed -e "s|https://github.com/|http://127.0.0.1:$port/|" -e "s|#define PAYLOADS \"/luma/payloads\"|#define PAYLOADS \"$sd/luma/payloads2\"|" \
     "$root/scripts/3ds/universal/update_reffix.c" > "$work/upd.c"

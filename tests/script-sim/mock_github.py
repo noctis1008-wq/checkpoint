@@ -11,6 +11,7 @@ FILES = {
     "noctis1008-wq/checkpoint": {"dropbox.c": b"/* dropbox */\n", "c_github_downloader.c": b"/* gh */\n"},
     "noctis1008-wq/godmode9-with-cartridge-fixer": {"GodMode9_RefFix.firm": b"FIRMREFFIX" * 100},
     "noctis1008-wq/o3ds-rec": {"sdbench.3dsx": b"3DSXBENCH"},
+    "noctis1008-wq/ntr-hr": {"BootNTRSelector-o3ds-rec.3dsx": b"3DSXNTR"},
 }
 
 class H(BaseHTTPRequestHandler):
