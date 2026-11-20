@@ -5,7 +5,7 @@
  * name: it puts this script right after "browser", second in the list.
  *
  * Fetches a release asset straight onto the SD card, without a PC:
- *   - a few presets (GodMode9_RefFix, o3ds-rec's NTR and SD bench, the Dropbox
+ *   - a few presets (GodMode9_RefFix, o3ds-rec's recorder and SD bench, the Dropbox
  *     sync script, this script's own update), each with its usual destination,
  *   - any public repository: type "owner/repo", pick a file of its latest
  *     release, pick where it goes (the destination is suggested from the file
@@ -259,7 +259,7 @@ char* p_repo(int i)
         return "noctis1008-wq/godmode9-with-cartridge-fixer";
     }
     if (i == 1) {
-        return "noctis1008-wq/ntr-hr";
+        return "noctis1008-wq/Luma3DS";
     }
     if (i == 2) {
         return "noctis1008-wq/o3ds-rec";
@@ -273,7 +273,7 @@ char* p_asset(int i)
         return "GodMode9_RefFix.firm";
     }
     if (i == 1) {
-        return "BootNTRSelector-o3ds-rec.3dsx";
+        return "Luma3DS-o3ds-rec.firm";
     }
     if (i == 2) {
         return "sdbench.3dsx";
@@ -290,7 +290,7 @@ char* p_dest(int i)
         return "/luma/payloads/GodMode9_RefFix.firm";
     }
     if (i == 1) {
-        return "/3ds/BootNTRSelector-o3ds-rec.3dsx";
+        return "/luma/payloads/Luma3DS-o3ds-rec.firm";
     }
     if (i == 2) {
         return "/3ds/sdbench.3dsx";
@@ -307,7 +307,7 @@ char* p_label(int i)
         return "GodMode9_RefFix (cartridge fixer)";
     }
     if (i == 1) {
-        return "o3ds-rec NTR (SD recording)";
+        return "o3ds-rec recorder (Luma3DS)";
     }
     if (i == 2) {
         return "o3ds-rec SD bench (sdbench.3dsx)";
@@ -379,7 +379,7 @@ int run_preset(int i)
         gui_message("Done. Hold START while powering on to\nopen it from the Luma3DS chainloader.");
     }
     else if (i == 1) {
-        gui_message("Done. Start BootNTRSelector from the\nHomebrew Launcher, then X+Y >\nRemote Play > SD Recording.");
+        gui_message("Done. Hold START while powering on and\nchoose Luma3DS-o3ds-rec. Then\nL+Down+Select > Screen recorder.");
     }
     else if (i == 2) {
         gui_message("Done. Start \"o3ds-rec SD bench\" from\nthe Homebrew Launcher. The result is\nsaved to /o3ds-rec/bench_result.txt");

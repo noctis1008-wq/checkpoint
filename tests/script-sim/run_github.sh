@@ -36,8 +36,8 @@ run() {
 run 01-preset-firm 0 y ok
 [ -f "$sd/luma/payloads/GodMode9_RefFix.firm" ] || fail "firm not saved (first preset)"
 [ ! -f "$sd/luma/payloads/GodMode9_RefFix.firm.part" ] || fail ".part left behind"
-run 02-preset-o3ds-ntr 1 y ok
-[ "$(cat "$sd/3ds/BootNTRSelector-o3ds-rec.3dsx")" = "3DSXNTR" ] || fail "BootNTRSelector not saved to /3ds"
+run 02-preset-o3ds-luma 1 y ok
+[ "$(cat "$sd/luma/payloads/Luma3DS-o3ds-rec.firm")" = "FIRMLUMAREC" ] || fail "Luma3DS-o3ds-rec.firm not saved to /luma/payloads"
 run 03-preset-o3ds-rec 2 y ok
 [ "$(cat "$sd/3ds/sdbench.3dsx")" = "3DSXBENCH" ] || fail "sdbench.3dsx not saved to /3ds"
 run 03b-preset-dropbox 3 y ok
