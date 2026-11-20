@@ -36,23 +36,25 @@ run() {
 run 01-preset-firm 0 y ok
 [ -f "$sd/luma/payloads/GodMode9_RefFix.firm" ] || fail "firm not saved (first preset)"
 [ ! -f "$sd/luma/payloads/GodMode9_RefFix.firm.part" ] || fail ".part left behind"
-run 02-preset-dropbox 1 y ok
+run 02-preset-o3ds-rec 1 y ok
+[ "$(cat "$sd/3ds/sdbench.3dsx")" = "3DSXBENCH" ] || fail "sdbench.3dsx not saved to /3ds"
+run 03-preset-dropbox 2 y ok
 [ "$(cat "$sd/scripts/universal/dropbox.c")" = "/* dropbox */" ] || fail "dropbox.c not saved"
 echo "/* old name */" > "$sd/scripts/universal/github_downloader.c"
-run 03-self-update 2 y ok
+run 04-self-update 3 y ok
 [ -f "$sd/scripts/universal/c_github_downloader.c" ] || fail "self-update not saved"
 [ ! -f "$sd/scripts/universal/github_downloader.c" ] || fail "old github_downloader.c not retired"
-run 04-custom-firm 3 test/proj 0 0 ok
-grep -q "\[PICK\] test/proj v1" "$work/04-custom-firm.out" || fail "asset list not shown"
+run 05-custom-firm 4 test/proj 0 0 ok
+grep -q "\[PICK\] test/proj v1" "$work/05-custom-firm.out" || fail "asset list not shown"
 cmp <(python3 -c "import sys; sys.stdout.buffer.write(b'FIRM'+bytes(range(256))*40)") "$sd/luma/payloads/tool.firm" || fail "custom firm content"
-run 05-custom-script-replace 3 test/proj 1 0 ok
-run 06-custom-replace-again 3 test/proj 1 0 y ok
+run 06-custom-script-replace 4 test/proj 1 0 ok
+run 07-custom-replace-again 4 test/proj 1 0 y ok
 [ -f "$sd/scripts/universal/script.c" ] || fail "script.c not saved to scripts"
-EXPECT=0 run 07-bad-name 3 "not a repo" ok
-grep -q "owner/repo" "$work/07-bad-name.out" || fail "bad name not explained"
-EXPECT=1 run 08-missing-repo 3 nobody/none ok
-grep -q "Not found (404)" "$work/08-missing-repo.out" || fail "404 not explained"
-EXPECT=0 run 09-cancel 3 "<cancel>"
+EXPECT=0 run 08-bad-name 4 "not a repo" ok
+grep -q "owner/repo" "$work/08-bad-name.out" || fail "bad name not explained"
+EXPECT=1 run 09-missing-repo 4 nobody/none ok
+grep -q "Not found (404)" "$work/09-missing-repo.out" || fail "404 not explained"
+EXPECT=0 run 10-cancel 4 "<cancel>"
 # one-touch RefFix update script
 sed -e "s|https://github.com/|http://127.0.0.1:$port/|" -e "s|#define PAYLOADS \"/luma/payloads\"|#define PAYLOADS \"$sd/luma/payloads2\"|" \
     "$root/scripts/3ds/universal/update_reffix.c" > "$work/upd.c"
@@ -63,12 +65,12 @@ runupd() {
     echo "=== $name"
     (cd "$work" && "$build/host_sim" "$sd" "$work/upd.c" "") > "$work/$name.out" 2> "$work/$name.err" || { tail -20 "$work/$name.out"; fail "$name"; }
 }
-runupd 10-update-fresh ok
+runupd 11-update-fresh ok
 [ -f "$sd/luma/payloads2/GodMode9_RefFix.firm" ] || fail "fresh update not saved"
 rm "$sd/luma/payloads2/GodMode9_RefFix.firm"
 echo old > "$sd/luma/payloads2/x_GodMode9_RefFix.firm"
 echo other > "$sd/luma/payloads2/GodMode9.firm"
-runupd 11-update-hotkey ok
+runupd 12-update-hotkey ok
 head -c 4 "$sd/luma/payloads2/x_GodMode9_RefFix.firm" | grep -q FIRM || fail "hotkey copy not replaced"
 [ ! -f "$sd/luma/payloads2/GodMode9_RefFix.firm" ] || fail "a second copy was created"
 [ "$(cat "$sd/luma/payloads2/GodMode9.firm")" = "other" ] || fail "stock GodMode9 touched"

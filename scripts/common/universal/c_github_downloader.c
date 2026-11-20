@@ -5,8 +5,8 @@
  * name: it puts this script right after "browser", second in the list.
  *
  * Fetches a release asset straight onto the SD card, without a PC:
- *   - a few presets (the Dropbox sync script, GodMode9_RefFix, this script's
- *     own update), each with its usual destination,
+ *   - a few presets (GodMode9_RefFix, the o3ds-rec SD bench, the Dropbox sync
+ *     script, this script's own update), each with its usual destination,
  *   - any public repository: type "owner/repo", pick a file of its latest
  *     release, pick where it goes (the destination is suggested from the file
  *     type: .firm -> /luma/payloads, .c -> Checkpoint's scripts, .3dsx -> /3ds,
@@ -248,7 +248,7 @@ int download_to(char* url, char* dest)
 
 /* ---- presets ------------------------------------------------------------- */
 
-#define NPRESET 3
+#define NPRESET 4
 
 /* Preset `i`: repo, asset name, destination (relative: "@" = Checkpoint root,
  * "/" = SD root), menu label, 3DS-only. Returned from a switch rather than kept
@@ -257,6 +257,9 @@ char* p_repo(int i)
 {
     if (i == 0) {
         return "noctis1008-wq/godmode9-with-cartridge-fixer";
+    }
+    if (i == 1) {
+        return "noctis1008-wq/o3ds-rec";
     }
     return "noctis1008-wq/checkpoint";
 }
@@ -267,6 +270,9 @@ char* p_asset(int i)
         return "GodMode9_RefFix.firm";
     }
     if (i == 1) {
+        return "sdbench.3dsx";
+    }
+    if (i == 2) {
         return "dropbox.c";
     }
     return "c_github_downloader.c";
@@ -278,6 +284,9 @@ char* p_dest(int i)
         return "/luma/payloads/GodMode9_RefFix.firm";
     }
     if (i == 1) {
+        return "/3ds/sdbench.3dsx";
+    }
+    if (i == 2) {
         return "@/scripts/universal/dropbox.c";
     }
     return "@/scripts/universal/c_github_downloader.c";
@@ -289,6 +298,9 @@ char* p_label(int i)
         return "GodMode9_RefFix (cartridge fixer)";
     }
     if (i == 1) {
+        return "o3ds-rec SD bench (sdbench.3dsx)";
+    }
+    if (i == 2) {
         return "Dropbox sync script (dropbox.c)";
     }
     return "Update this downloader";
@@ -296,7 +308,7 @@ char* p_label(int i)
 
 int p_3dsonly(int i)
 {
-    return i == 0;
+    return i == 0 || i == 1;
 }
 
 /* Earlier versions were called github_downloader.c: once this one is in
@@ -353,6 +365,9 @@ int run_preset(int i)
     }
     if (i == 0) {
         gui_message("Done. Hold START while powering on to\nopen it from the Luma3DS chainloader.");
+    }
+    else if (i == 1) {
+        gui_message("Done. Start \"o3ds-rec SD bench\" from\nthe Homebrew Launcher. The result is\nsaved to /o3ds-rec/bench_result.txt");
     }
     else {
         gui_message("Done. New or updated scripts appear in\nthe Scripts list the next time\nCheckpoint starts.");
